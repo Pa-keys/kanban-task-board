@@ -7,9 +7,9 @@ const VALID_PRIORITIES: TaskPriority[] = ['LOW', 'MEDIUM', 'HIGH'];
 
 export const taskController = {
   // GET /api/tasks - Retrieve all tasks
-  getAll(req: Request, res: Response) {
+  async getAll(req: Request, res: Response) {
     try {
-      const tasks = taskService.getAllTasks();
+      const tasks = await taskService.getAllTasks();
       res.status(200).json({ success: true, data: tasks });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Internal server error while fetching tasks' });
@@ -17,10 +17,10 @@ export const taskController = {
   },
 
   // GET /api/tasks/:id - Retrieve single task
-  getById(req: Request, res: Response) {
+  async getById(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
-      const task = taskService.getTaskById(id);
+      const task = await taskService.getTaskById(id);
 
       if (!task) {
         return res.status(404).json({ success: false, message: `Task with id '${id}' not found` });
@@ -33,7 +33,7 @@ export const taskController = {
   },
 
   // POST /api/tasks - Create a new task
-  create(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     try {
       const { title, description, status, priority } = req.body;
 
@@ -56,7 +56,7 @@ export const taskController = {
         });
       }
 
-      const newTask = taskService.createTask({ title, description, status, priority });
+      const newTask = await taskService.createTask({ title, description, status, priority });
       res.status(201).json({ success: true, data: newTask });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Internal server error while creating task' });
@@ -64,7 +64,7 @@ export const taskController = {
   },
 
   // PUT /api/tasks/:id - Update an existing task
-  update(req: Request, res: Response) {
+  async update(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
       const { title, description, status, priority } = req.body;
@@ -87,7 +87,7 @@ export const taskController = {
         });
       }
 
-      const updated = taskService.updateTask(id, { title, description, status, priority });
+      const updated = await taskService.updateTask(id, { title, description, status, priority });
       if (!updated) {
         return res.status(404).json({ success: false, message: `Task with id '${id}' not found` });
       }
@@ -99,10 +99,10 @@ export const taskController = {
   },
 
   // DELETE /api/tasks/:id - Delete a task
-  delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response) {
     try {
       const id = req.params.id as string;
-      const deleted = taskService.deleteTask(id);
+      const deleted = await taskService.deleteTask(id);
 
       if (!deleted) {
         return res.status(404).json({ success: false, message: `Task with id '${id}' not found` });
