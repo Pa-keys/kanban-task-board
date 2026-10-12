@@ -1,0 +1,16 @@
+{
+  "name": "kanban-task-board",
+  "version": "1.0.0",
+  "description": "Full-Stack Kanban Task Management Dashboard with React, Express, TypeScript, and SQLite",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "test:api": "npm --prefix server run test:api",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "generate-doc": "npm --prefix server run generate-doc"
+  },
+  "keywords": ["react", "express", "sqlite", "typescript", "kanban"],
+  "author": "",
+  "license": "ISC"
+}
