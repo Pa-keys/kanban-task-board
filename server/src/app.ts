@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import taskRoutes from './routes/taskRoutes.js';
 import { initDatabase, seedInitialData } from './db/database.js';
 
@@ -26,5 +29,22 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // 4. Mount Task API Routes
 app.use('/api/tasks', taskRoutes);
+
+// 5. Serve static frontend in production if client/dist exists
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Locate client/dist from either src/ or dist/
+const clientDistPath = path.resolve(__dirname, fs.existsSync(path.resolve(__dirname, '../../client/dist')) ? '../../client/dist' : '../../../client/dist');
+
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  // Catch-all route to support client-side routing and PWA navigation
+  app.get('*', (req: Request, res: Response, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 export default app;

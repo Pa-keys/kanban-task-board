@@ -8,6 +8,8 @@
     "test:api": "npm --prefix server run test:api",
     "build:server": "npm --prefix server run build",
     "build:client": "npm --prefix client run build",
+    "build": "npm --prefix client run build && npm --prefix server run build",
+    "start": "npm --prefix server run start",
     "generate-doc": "npm --prefix server run generate-doc"
   },
   "keywords": ["react", "express", "sqlite", "typescript", "kanban"],

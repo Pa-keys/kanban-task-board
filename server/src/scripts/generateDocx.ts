@@ -265,6 +265,23 @@ const doc = new Document({
           'Instant client-side search by title or description, priority pills, and keyboard shortcuts (/ to search, N to add task).'
         ),
 
+        createHeading1('Module 11: Unified Modal Architecture & Full CRUD Lifecycle'),
+        createBodyParagraph(
+          'Completing the full CRUD contract with clean, reusable components and device-adaptive triggers.'
+        ),
+        createBullet(
+          'Unified Modal Pattern',
+          'Instead of duplicating modal markup, a single TaskModal adapts based on editingTask state (blank for create, prepopulated for edit), calling POST or PUT accordingly.'
+        ),
+        createBullet(
+          'Event Propagation & Ergonomics',
+          'Single-clicking a card body or the footer pencil icon opens the edit modal, while move arrows call e.stopPropagation() so quick moves never accidentally pop open the modal.'
+        ),
+        createBullet(
+          'Mobile Drawer Integration',
+          'On smartphones, tapping a card opens the slide-up Action Drawer with a dedicated "Edit Task Details" button leading into the modal.'
+        ),
+
         createHeading1('Current Project: Kanban Task Management Dashboard'),
         createBodyParagraph('We have completed all development phases of Project #1:'),
         createBullet('Phase 1A: Backend REST API', 'Scaffold Node/Express/TypeScript, define Task data model, and implement CRUD endpoints. [Status: Completed & 100% Tested]'),
@@ -272,6 +289,7 @@ const doc = new Document({
         createBullet('Phase 1C: Frontend Client', 'Built modular UI (Header, KanbanBoard, KanbanColumn, TaskCard, TaskModal) with clean dark-mode CSS and optimistic updates. [Status: Completed]'),
         createBullet('Phase 1D: Full-Stack Integration', 'Connected React to Express API via Vite proxy with loading states, error boundaries, and optimistic status updates. [Status: Completed]'),
         createBullet('Phase 1E: Linear UI/UX & Mobile PWA', 'Linear design system, HTML5 drag-and-drop, mobile segmented tab navigation, bottom sheet drawer, keyboard shortcuts, and PWA installability. [Status: Completed]'),
+        createBullet('Phase 1F: Full Task Editing', 'Unified modal for Create & Edit, card click triggers, dedicated pencil buttons, and optimistic state synchronization. [Status: Completed]'),
 
         createCallout(
           'HOW TO USE THIS DOCUMENT',

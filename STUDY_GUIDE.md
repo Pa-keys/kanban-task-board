@@ -208,6 +208,26 @@ We implemented native HTML5 Drag and Drop without heavy external libraries:
 
 ---
 
+## Module 11: Unified Modal Architecture & Full CRUD Lifecycle
+
+### 1. Dual-Purpose Components (Create vs. Edit)
+Instead of writing separate `CreateTaskModal` and `EditTaskModal` components (which duplicates 90% of form validation, inputs, and CSS), industry standard is a single **Unified Modal** driven by state:
+* When `editingTask === null`: Modal renders "Create New Task" with blank fields and invokes `POST /api/tasks`.
+* When `editingTask !== null`: Modal renders "Edit Task" with prepopulated values (`title`, `description`, `status`, `priority`) and invokes `PUT /api/tasks/:id`.
+
+### 2. Multi-Device Trigger Ergonomics
+* **Desktop (>=820px):** Single-click anywhere on the card or clicking the ✏️ pencil icon in the card footer immediately opens the edit modal. Directional move arrows (`←` / `→`) stop event propagation (`e.stopPropagation()`) so quick-moving a card never accidentally triggers the modal.
+* **Mobile (<820px):** Tapping a card opens the slide-up Action Drawer, which now includes a dedicated "Edit Task Details" button leading into the modal.
+
+### 3. Full CRUD Loop Complete
+Our Kanban board now fulfills the complete database CRUD contract end-to-end:
+* **C (Create):** `POST /api/tasks` via "+ New Task" or pressing `N`.
+* **R (Read):** `GET /api/tasks` with search and priority filtering.
+* **U (Update):** `PUT /api/tasks/:id` via Drag-and-Drop, move arrows, or full Edit Modal.
+* **D (Delete):** `DELETE /api/tasks/:id` via card trash button or bottom sheet.
+
+---
+
 ## Current Project: Kanban Task Management Dashboard
 We have built and completed Project #1 following an API-first approach:
 * [x] **Phase 1A: Backend REST API** — Scaffold Node/Express/TypeScript, define Task data model, and implement CRUD endpoints.
@@ -216,3 +236,4 @@ We have built and completed Project #1 following an API-first approach:
 * [x] **Phase 1C: Frontend Client** — Built modular UI (Header, KanbanBoard, KanbanColumn, TaskCard, TaskModal) with clean dark-mode CSS and optimistic updates.
 * [x] **Phase 1D: Full-Stack Integration** — Connected React to Express API via Vite proxy with loading states, error boundaries, and optimistic status updates.
 * [x] **Phase 1E: Linear UI/UX & Mobile PWA** — Implemented Linear design system, HTML5 drag-and-drop, mobile segmented tab navigation, bottom sheet drawer, keyboard shortcuts, and PWA installability.
+* [x] **Phase 1F: Full Task Editing** — Unified modal for Create & Edit, card click triggers, dedicated pencil buttons, and optimistic state synchronization.
