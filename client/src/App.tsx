@@ -6,6 +6,7 @@ import { SearchBar } from './components/SearchBar';
 import { KanbanBoard } from './components/KanbanBoard';
 import { TaskModal } from './components/TaskModal';
 import { TaskBottomSheet } from './components/TaskBottomSheet';
+import { IconAlert } from './components/Icons';
 
 export const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -123,9 +124,17 @@ export const App: React.FC = () => {
 
   return (
     <div className="app-container">
+      {/* Ambient aurora: decorative blurred light blobs, hidden from screen readers */}
+      <div className="aurora" aria-hidden="true">
+        <span className="blob blob-1" />
+        <span className="blob blob-2" />
+        <span className="blob blob-3" />
+      </div>
+
       <Header
         onOpenCreateModal={() => setIsModalOpen(true)}
         taskCount={tasks.length}
+        doneCount={tasks.filter((t) => t.status === 'DONE').length}
       />
 
       <SearchBar
@@ -137,7 +146,7 @@ export const App: React.FC = () => {
 
       {error && (
         <div className="banner-error">
-          <span>⚠️ {error}</span>
+          <span className="banner-msg"><IconAlert size={16} /> {error}</span>
           <button className="btn-retry" onClick={loadTasks}>
             Retry
           </button>

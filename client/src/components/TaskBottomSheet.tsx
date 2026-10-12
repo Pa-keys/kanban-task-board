@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Task, TaskStatus } from '../types/task';
+import { IconX, IconCheck, IconTrash } from './Icons';
 
 interface TaskBottomSheetProps {
   task: Task | null;
@@ -44,7 +45,7 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
             </span>
             <h3 className="bottom-sheet-title">{task.title}</h3>
           </div>
-          <button className="btn-close" onClick={onClose}>✕</button>
+          <button className="btn-close" onClick={onClose} aria-label="Close"><IconX /></button>
         </div>
 
         {task.description && (
@@ -64,7 +65,7 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
                   disabled={isCurrent}
                 >
                   <span className="dot" style={{ backgroundColor: col.color }} />
-                  {col.label} {isCurrent && '✓'}
+                  {col.label} {isCurrent && <IconCheck />}
                 </button>
               );
             })}
@@ -73,7 +74,7 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
 
         <div className="bottom-sheet-actions">
           <button className="btn-danger-full" onClick={handleDelete}>
-            🗑️ Delete Task
+            <IconTrash /> Delete Task
           </button>
         </div>
       </div>

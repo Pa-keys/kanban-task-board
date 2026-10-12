@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Task, TaskStatus } from '../types/task';
+import { IconChevronLeft, IconChevronRight, IconTrash } from './Icons';
 
 interface TaskCardProps {
   task: Task;
@@ -79,7 +80,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             title={canMoveLeft ? `Move to ${STATUS_ORDER[currentIndex - 1]}` : 'First column'}
             aria-label="Move left"
           >
-            ←
+            <IconChevronLeft />
           </button>
           <button
             className="btn-icon-sm"
@@ -88,7 +89,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             title={canMoveRight ? `Move to ${STATUS_ORDER[currentIndex + 1]}` : 'Last column'}
             aria-label="Move right"
           >
-            →
+            <IconChevronRight />
           </button>
         </div>
 
@@ -98,7 +99,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           title="Delete task"
           aria-label="Delete task"
         >
-          🗑️
+          <IconTrash />
         </button>
       </div>
     </div>

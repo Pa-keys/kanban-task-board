@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import type { TaskPriority } from '../types/task';
+import { IconSearch, IconX } from './Icons';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -44,7 +45,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className="search-filter-container">
       <div className="search-input-wrapper">
-        <span className="search-icon">🔍</span>
+        <span className="search-icon"><IconSearch /></span>
         <input
           ref={inputRef}
           type="text"
@@ -59,7 +60,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             onClick={() => onSearchChange('')}
             title="Clear search"
           >
-            ✕
+            <IconX size={14} />
           </button>
         ) : (
           <span className="search-shortcut-badge">/</span>
