@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { Task, TaskStatus, TaskPriority, CreateTaskDTO } from './types/task';
+import type { Task, TaskStatus, TaskPriority, CreateTaskDTO, UpdateTaskDTO } from './types/task';
 import { taskApi } from './services/api';
 import { Header } from './components/Header';
 import { SearchBar } from './components/SearchBar';
@@ -12,7 +12,10 @@ export const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modal State: tracks whether modal is open and which task is being edited (null = create new)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -54,6 +57,7 @@ export const App: React.FC = () => {
       );
       if (!isEditingInput && (e.key === 'n' || e.key === 'N')) {
         e.preventDefault();
+        setEditingTask(null);
         setIsModalOpen(true);
       }
     };
@@ -62,13 +66,41 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // 3. Create new task handler
-  const handleCreateTask = async (dto: CreateTaskDTO) => {
-    const newTask = await taskApi.createTask(dto);
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+  // 3. Open modal in Create mode
+  const handleOpenCreateModal = () => {
+    setEditingTask(null);
+    setIsModalOpen(true);
   };
 
-  // 4. Move task status handler (Optimistic UI Update)
+  // 4. Open modal in Edit mode
+  const handleOpenEditModal = (task: Task) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+
+  // 5. Submit handler for Modal (handles both Create and Edit)
+  const handleModalSubmit = async (dto: CreateTaskDTO | UpdateTaskDTO) => {
+    if (editingTask) {
+      // Edit existing task
+      // Optimistic update: instantly reflect changes on board
+      setTasks((prev) =>
+        prev.map((t) => (t.id === editingTask.id ? { ...t, ...dto, updatedAt: new Date().toISOString() } : t))
+      );
+      try {
+        const updated = await taskApi.updateTask(editingTask.id, dto);
+        setTasks((prev) => prev.map((t) => (t.id === editingTask.id ? updated : t)));
+      } catch (err: unknown) {
+        setError('Failed to save task edits to server');
+        loadTasks();
+      }
+    } else {
+      // Create new task
+      const newTask = await taskApi.createTask(dto as CreateTaskDTO);
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+    }
+  };
+
+  // 6. Move task status handler (Optimistic UI Update)
   const handleStatusChange = async (id: string, nextStatus: TaskStatus) => {
     try {
       setTasks((prev) =>
@@ -81,7 +113,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // 5. Delete task handler (Optimistic UI Update)
+  // 7. Delete task handler (Optimistic UI Update)
   const handleDeleteTask = async (id: string) => {
     try {
       setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -92,7 +124,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // 6. Drag-and-Drop Handlers
+  // 8. Drag-and-Drop Handlers
   const handleDragStartTask = (e: React.DragEvent, id: string) => {
     setDraggingTaskId(id);
     e.dataTransfer.setData('text/plain', id);
@@ -107,7 +139,16 @@ export const App: React.FC = () => {
     setDraggingTaskId(null);
   };
 
-  // 7. Filtered tasks using useMemo for performance
+  // 9. Card click handler: on desktop (>=820px) open edit modal directly; on mobile (<820px) open bottom sheet drawer
+  const handleCardClick = (task: Task) => {
+    if (window.innerWidth < 820) {
+      setSheetTask(task);
+    } else {
+      handleOpenEditModal(task);
+    }
+  };
+
+  // 10. Filtered tasks using useMemo for performance
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
       const matchesSearch =
@@ -132,7 +173,7 @@ export const App: React.FC = () => {
       </div>
 
       <Header
-        onOpenCreateModal={() => setIsModalOpen(true)}
+        onOpenCreateModal={handleOpenCreateModal}
         taskCount={tasks.length}
         doneCount={tasks.filter((t) => t.status === 'DONE').length}
       />
@@ -163,7 +204,8 @@ export const App: React.FC = () => {
           tasks={filteredTasks}
           onDelete={handleDeleteTask}
           onStatusChange={handleStatusChange}
-          onSelectTask={(task) => setSheetTask(task)}
+          onSelectTask={handleCardClick}
+          onEditTask={handleOpenEditModal}
           onDragStartTask={handleDragStartTask}
           onDropTask={handleDropTask}
         />
@@ -171,14 +213,19 @@ export const App: React.FC = () => {
 
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateTask}
+        initialTask={editingTask}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleModalSubmit}
       />
 
       <TaskBottomSheet
         task={sheetTask}
         onClose={() => setSheetTask(null)}
         onStatusChange={handleStatusChange}
+        onEditTask={handleOpenEditModal}
         onDelete={handleDeleteTask}
       />
     </div>

@@ -1,11 +1,12 @@
 import React from 'react';
 import type { Task, TaskStatus } from '../types/task';
-import { IconX, IconCheck, IconTrash } from './Icons';
+import { IconX, IconCheck, IconTrash, IconEdit } from './Icons';
 
 interface TaskBottomSheetProps {
   task: Task | null;
   onClose: () => void;
   onStatusChange: (id: string, nextStatus: TaskStatus) => void;
+  onEditTask: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
@@ -19,6 +20,7 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
   task,
   onClose,
   onStatusChange,
+  onEditTask,
   onDelete,
 }) => {
   if (!task) return null;
@@ -26,6 +28,11 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
   const handleMove = (newStatus: TaskStatus) => {
     onStatusChange(task.id, newStatus);
     onClose();
+  };
+
+  const handleEdit = () => {
+    onClose();
+    onEditTask(task);
   };
 
   const handleDelete = () => {
@@ -73,6 +80,9 @@ export const TaskBottomSheet: React.FC<TaskBottomSheetProps> = ({
         </div>
 
         <div className="bottom-sheet-actions">
+          <button className="btn-edit-full" onClick={handleEdit}>
+            <IconEdit /> Edit Task Details
+          </button>
           <button className="btn-danger-full" onClick={handleDelete}>
             <IconTrash /> Delete Task
           </button>

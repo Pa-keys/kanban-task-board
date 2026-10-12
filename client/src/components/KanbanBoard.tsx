@@ -7,6 +7,7 @@ interface KanbanBoardProps {
   onDelete: (id: string) => void;
   onStatusChange: (id: string, nextStatus: TaskStatus) => void;
   onSelectTask: (task: Task) => void;
+  onEditTask: (task: Task) => void;
   onDragStartTask: (e: React.DragEvent, id: string) => void;
   onDropTask: (targetStatus: TaskStatus) => void;
 }
@@ -22,6 +23,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   onDelete,
   onStatusChange,
   onSelectTask,
+  onEditTask,
   onDragStartTask,
   onDropTask,
 }) => {
@@ -68,6 +70,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 onDelete={onDelete}
                 onStatusChange={onStatusChange}
                 onSelectTask={onSelectTask}
+                onEditTask={onEditTask}
                 onDragStartTask={onDragStartTask}
                 onDropTask={onDropTask}
               />

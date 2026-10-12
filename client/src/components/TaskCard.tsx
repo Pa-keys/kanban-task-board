@@ -1,12 +1,13 @@
 import React from 'react';
 import type { Task, TaskStatus } from '../types/task';
-import { IconChevronLeft, IconChevronRight, IconTrash } from './Icons';
+import { IconChevronLeft, IconChevronRight, IconTrash, IconEdit } from './Icons';
 
 interface TaskCardProps {
   task: Task;
   onDelete: (id: string) => void;
   onStatusChange: (id: string, nextStatus: TaskStatus) => void;
   onSelectTask: (task: Task) => void;
+  onEditTask: (task: Task) => void;
   onDragStart?: (e: React.DragEvent, id: string) => void;
 }
 
@@ -17,6 +18,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onDelete,
   onStatusChange,
   onSelectTask,
+  onEditTask,
   onDragStart,
 }) => {
   const currentIndex = STATUS_ORDER.indexOf(task.status);
@@ -37,6 +39,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     }
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEditTask(task);
+  };
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete(task.id);
@@ -47,7 +54,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     day: 'numeric',
   });
 
-  // Short ID display (e.g. "TSK-a1b2")
   const shortId = `TSK-${task.id.slice(0, 4).toUpperCase()}`;
 
   return (
@@ -93,14 +99,24 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           </button>
         </div>
 
-        <button
-          className="btn-delete"
-          onClick={handleDelete}
-          title="Delete task"
-          aria-label="Delete task"
-        >
-          <IconTrash />
-        </button>
+        <div className="card-actions-right">
+          <button
+            className="btn-action-icon btn-edit"
+            onClick={handleEdit}
+            title="Edit task"
+            aria-label="Edit task"
+          >
+            <IconEdit />
+          </button>
+          <button
+            className="btn-action-icon btn-delete"
+            onClick={handleDelete}
+            title="Delete task"
+            aria-label="Delete task"
+          >
+            <IconTrash />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import type { CreateTaskDTO, TaskPriority, TaskStatus } from '../types/task';
+import type { Task, CreateTaskDTO, UpdateTaskDTO, TaskPriority, TaskStatus } from '../types/task';
+import { IconX } from './Icons';
 
 interface TaskModalProps {
   isOpen: boolean;
+  initialTask?: Task | null;
   onClose: () => void;
-  onSubmit: (dto: CreateTaskDTO) => Promise<void>;
+  onSubmit: (dto: CreateTaskDTO | UpdateTaskDTO) => Promise<void>;
 }
 
-export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit }) => {
+export const TaskModal: React.FC<TaskModalProps> = ({
+  isOpen,
+  initialTask,
+  onClose,
+  onSubmit,
+}) => {
+  const isEditing = Boolean(initialTask);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>('TODO');
@@ -15,17 +23,24 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState('');
 
-  // Reset form when modal opens
+  // Sync modal state when it opens or when initialTask changes
   useEffect(() => {
     if (isOpen) {
-      setTitle('');
-      setDescription('');
-      setStatus('TODO');
-      setPriority('MEDIUM');
+      if (initialTask) {
+        setTitle(initialTask.title);
+        setDescription(initialTask.description || '');
+        setStatus(initialTask.status);
+        setPriority(initialTask.priority);
+      } else {
+        setTitle('');
+        setDescription('');
+        setStatus('TODO');
+        setPriority('MEDIUM');
+      }
       setValidationError('');
       setIsSubmitting(false);
     }
-  }, [isOpen]);
+  }, [isOpen, initialTask]);
 
   if (!isOpen) return null;
 
@@ -61,9 +76,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit 
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Create New Task</h2>
+          <h2>{isEditing ? 'Edit Task' : 'Create New Task'}</h2>
           <button className="btn-close" onClick={onClose} aria-label="Close modal">
-            ✕
+            <IconX size={16} />
           </button>
         </div>
 
@@ -127,7 +142,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSubmit 
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Task'}
+              {isSubmitting ? (isEditing ? 'Saving...' : 'Creating...') : (isEditing ? 'Save Changes' : 'Create Task')}
             </button>
           </div>
         </form>
