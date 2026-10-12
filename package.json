@@ -17,6 +17,9 @@
     "start": "npm --prefix server run start",
     "generate-doc": "npm --prefix server run generate-doc"
   },
+  "overrides": {
+    "typescript": "^5.8.2"
+  },
   "keywords": ["react", "express", "sqlite", "typescript", "kanban"],
   "author": "",
   "license": "ISC"
