@@ -1,8 +1,13 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
+
+// Load environment variables (.env) immediately
+dotenv.config();
+
 import taskRoutes from './routes/taskRoutes.js';
 import { initDatabase, seedInitialData } from './db/database.js';
 

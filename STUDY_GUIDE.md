@@ -228,6 +228,34 @@ Our Kanban board now fulfills the complete database CRUD contract end-to-end:
 
 ---
 
+## Module 12: Serverless Deployment (Vercel) & Cloud Database Integration (Supabase)
+
+### 1. Serverless Functions vs. Persistent Servers
+* **Persistent Servers (e.g. Render/EC2):** A continuous Node.js container runs 24/7 with a persistent local disk, allowing local SQLite files (`kanban.db`) to survive restarts.
+* **Serverless Functions (e.g. Vercel/AWS Lambda):** Endpoints run as ephemeral micro-containers that spin up in milliseconds on demand and freeze/destroy when idle. Their local filesystem is temporary (erased on shutdown).
+* **The Cloud Database Solution:** Because local disk is ephemeral on serverless platforms, all persistent state MUST live in a hosted cloud database accessed over the network (e.g. **Supabase PostgreSQL**).
+
+### 2. The Hybrid Database Adapter Pattern
+In `taskService.ts`, we implemented a robust adapter pattern:
+```typescript
+if (isSupabaseConfigured && supabase) {
+  // Production / Cloud: Query Supabase PostgreSQL over network
+  const { data } = await supabase.from('tasks').select('*');
+  return data;
+} else {
+  // Local / Testing Fallback: Query fast embedded SQLite
+  return db.prepare('SELECT * FROM tasks').all();
+}
+```
+**Why this matters:** You can run automated tests (`npm run test:api`) instantly on your machine with zero internet connection, while production deployments seamlessly talk to Cloud PostgreSQL.
+
+### 3. Vercel Monorepo Serverless Routing
+To host both React (Vite) and Express on Vercel:
+* `api/index.ts`: Exports our Express app as a Vercel Serverless Function.
+* `vercel.json`: Rewrites `/api/(.*)` requests to the serverless function and routes all other requests to the compiled React bundle in `client/dist`.
+
+---
+
 ## Current Project: Kanban Task Management Dashboard
 We have built and completed Project #1 following an API-first approach:
 * [x] **Phase 1A: Backend REST API** — Scaffold Node/Express/TypeScript, define Task data model, and implement CRUD endpoints.
@@ -237,3 +265,4 @@ We have built and completed Project #1 following an API-first approach:
 * [x] **Phase 1D: Full-Stack Integration** — Connected React to Express API via Vite proxy with loading states, error boundaries, and optimistic status updates.
 * [x] **Phase 1E: Linear UI/UX & Mobile PWA** — Implemented Linear design system, HTML5 drag-and-drop, mobile segmented tab navigation, bottom sheet drawer, keyboard shortcuts, and PWA installability.
 * [x] **Phase 1F: Full Task Editing** — Unified modal for Create & Edit, card click triggers, dedicated pencil buttons, and optimistic state synchronization.
+* [x] **Phase 1G: Serverless & Cloud Database** — Integrated Cloud Supabase PostgreSQL with local SQLite fallback, and configured Vercel serverless routing.

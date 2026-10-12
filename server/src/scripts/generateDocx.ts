@@ -282,6 +282,23 @@ const doc = new Document({
           'On smartphones, tapping a card opens the slide-up Action Drawer with a dedicated "Edit Task Details" button leading into the modal.'
         ),
 
+        createHeading1('Module 12: Serverless Deployment (Vercel) & Cloud Database (Supabase)'),
+        createBodyParagraph(
+          'Deploying to modern edge networks with serverless architectures and hosted cloud databases.'
+        ),
+        createBullet(
+          'Serverless vs Persistent Servers',
+          'Vercel uses ephemeral serverless functions where local disk is wiped on shutdown. This requires migrating from local SQLite files to a hosted cloud database like Supabase PostgreSQL.'
+        ),
+        createBullet(
+          'Hybrid Database Adapter Pattern',
+          'taskService.ts automatically checks if Supabase credentials exist. In production it queries cloud PostgreSQL; in offline local testing it uses embedded SQLite, giving the best of both worlds.'
+        ),
+        createBullet(
+          'Vercel Monorepo Serverless Routing',
+          'api/index.ts exports our Express app as a serverless function, and vercel.json rewrites /api/(.*) to it while serving the static React build from client/dist.'
+        ),
+
         createHeading1('Current Project: Kanban Task Management Dashboard'),
         createBodyParagraph('We have completed all development phases of Project #1:'),
         createBullet('Phase 1A: Backend REST API', 'Scaffold Node/Express/TypeScript, define Task data model, and implement CRUD endpoints. [Status: Completed & 100% Tested]'),
@@ -290,6 +307,7 @@ const doc = new Document({
         createBullet('Phase 1D: Full-Stack Integration', 'Connected React to Express API via Vite proxy with loading states, error boundaries, and optimistic status updates. [Status: Completed]'),
         createBullet('Phase 1E: Linear UI/UX & Mobile PWA', 'Linear design system, HTML5 drag-and-drop, mobile segmented tab navigation, bottom sheet drawer, keyboard shortcuts, and PWA installability. [Status: Completed]'),
         createBullet('Phase 1F: Full Task Editing', 'Unified modal for Create & Edit, card click triggers, dedicated pencil buttons, and optimistic state synchronization. [Status: Completed]'),
+        createBullet('Phase 1G: Serverless & Cloud Database', 'Integrated Cloud Supabase PostgreSQL with local SQLite fallback, and configured Vercel serverless routing. [Status: Completed]'),
 
         createCallout(
           'HOW TO USE THIS DOCUMENT',
