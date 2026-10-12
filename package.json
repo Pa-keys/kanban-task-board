@@ -1,6 +1,7 @@
 {
   "name": "kanban-task-board",
   "version": "1.0.0",
+  "type": "module",
   "description": "Full-Stack Kanban Task Management Dashboard with React, Express, TypeScript, and SQLite",
   "workspaces": [
     "server",
