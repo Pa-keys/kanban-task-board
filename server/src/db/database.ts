@@ -5,11 +5,28 @@ import fs from 'node:fs';
 // Allow database path override (e.g. ':memory:' for isolated testing)
 const dbPath = process.env.DATABASE_PATH || path.resolve(process.cwd(), 'kanban.db');
 
-export const db = new DatabaseSync(dbPath);
+let _db: DatabaseSync | null = null;
+
+export function getDatabase(): DatabaseSync {
+  if (!_db) {
+    _db = new DatabaseSync(dbPath);
+  }
+  return _db;
+}
+
+// Backward-compatible lazy getter
+export const db = {
+  prepare(sql: string) {
+    return getDatabase().prepare(sql);
+  },
+  exec(sql: string) {
+    return getDatabase().exec(sql);
+  },
+};
 
 // Initialize schema: Create tables and indexes if they don't already exist
 export function initDatabase() {
-  db.exec(`
+  getDatabase().exec(`
     CREATE TABLE IF NOT EXISTS tasks (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,

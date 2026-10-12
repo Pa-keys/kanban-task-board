@@ -12,7 +12,8 @@ export const taskController = {
       const tasks = await taskService.getAllTasks();
       res.status(200).json({ success: true, data: tasks });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Internal server error while fetching tasks' });
+      console.error('Error in taskController.getAll:', error);
+      res.status(500).json({ success: false, message: 'Internal server error while fetching tasks', error: String(error) });
     }
   },
 

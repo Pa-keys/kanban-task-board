@@ -10,10 +10,13 @@ dotenv.config();
 
 import taskRoutes from './routes/taskRoutes.js';
 import { initDatabase, seedInitialData } from './db/database.js';
+import { isSupabaseConfigured } from './db/supabase.js';
 
-// Initialize SQLite database schema and seed data for local dev & fallback
-initDatabase();
-seedInitialData();
+// Only initialize SQLite fallback if Supabase is NOT configured and not in Vercel
+if (!isSupabaseConfigured && !process.env.VERCEL) {
+  initDatabase();
+  seedInitialData();
+}
 
 const app = express();
 
